@@ -51,7 +51,10 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 	output := ConvertMarkdownToHTML(markdownFile.Content)
 
 	// TODO: Implement sanitize processing here before replacing placeholders
+	// TODO: Implement stylesheet and javascript replacement logic
 	finalContent := strings.ReplaceAll(string(templateContent), "{{ args.content }}", string(output))
+	finalContent = strings.ReplaceAll(finalContent, "{{ args.stylesheet }}", "")
+	finalContent = strings.ReplaceAll(finalContent, "{{ args.javascript }}", "")
 	finalContent = strings.ReplaceAll(finalContent, "{{ args.title }}", markdownFile.Metadata.Title)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
