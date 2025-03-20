@@ -39,7 +39,8 @@ func main() {
 				return err
 			}
 			outputPath := filepath.Join(outputDir, strings.TrimSuffix(relativePath, ".md")+".html")
-			if err := ensureDirExists(filepath.Dir(outputPath)); err != nil {
+			outputDirPath := filepath.Dir(outputPath)
+			if err := ensureDirExists(outputDirPath); err != nil {
 				return err
 			}
 			content.ConvertMarkdownToHTML(path, outputDirPath)
