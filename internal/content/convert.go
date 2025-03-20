@@ -27,6 +27,10 @@ func ConvertMarkdownToHTML(input []byte) []byte {
 	return blackfriday.Run(input)
 }
 
+func GetTemplateFilePath(projectRoot string, metadata Metadata) string {
+	return filepath.Join(projectRoot, "templates", metadata.Layout+".tmpl.html")
+}
+
 func ProcessMarkdownFile(inputPath, outputDir string) {
 	input, err := os.ReadFile(inputPath)
 	if err != nil {
