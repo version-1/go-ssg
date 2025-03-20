@@ -25,6 +25,7 @@ func main() {
 			return err
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {
+      fmt.Println("=============", path)
 			relativePath, err := filepath.Rel(inputDir, path)
 			if err != nil {
 				return err
