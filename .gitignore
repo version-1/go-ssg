@@ -27,3 +27,6 @@ go.work.sum
 node_modules
 .env
 .aider*
+
+# Public directory
+public
