@@ -14,13 +14,6 @@ func ensureDirExists(dirPath string) error {
 	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
 		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
 			return err
-			// Get the template file path using the metadata
-			markdownFile, err := content.ParseMarkdownFile(path)
-			if err != nil {
-				return err
-			}
-			templateFilePath := content.GetTemplateFilePath(projectRoot, markdownFile.Metadata)
-			fmt.Printf("Using template: %s\n", templateFilePath)
 		}
 	}
 	return nil
