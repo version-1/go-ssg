@@ -18,6 +18,7 @@ func ensureDirExists(dirPath string) error {
 	}
 	return nil
 }
+func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go-ssg <project-root>")
 		os.Exit(1)
