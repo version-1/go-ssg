@@ -1,3 +1,3 @@
-# Contact Us
+# お問い合わせ
 
-Feel free to reach out via our contact page.
+お問い合わせページからお気軽にご連絡ください。

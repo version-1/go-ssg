@@ -1,3 +1,3 @@
-# About Us
+# 私たちについて
 
-This is the about page located in a subdirectory.
+これはサブディレクトリにある「私たちについて」のページです。
