@@ -40,12 +40,9 @@ func ProcessMarkdownFile(inputPath, outputDir string) {
 	output := ConvertMarkdownToHTML(markdownFile.Content)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
-	err = os.WriteFile(outputFilePath, output, 0644)
-	if err != nil {
+	if err := WriteHTMLToFile(outputFilePath, output); err != nil {
 		log.Fatalf("Failed to write file %s: %v", outputFilePath, err)
 	}
-
-	fmt.Printf("Converted %s to %s\n", inputPath, outputFilePath)
 }
 func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
 	parts := strings.SplitN(string(data), "---", 3)
@@ -62,4 +59,12 @@ func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
 		Metadata: metadata,
 		Content:  []byte(parts[2]),
 	}, nil
+}
+func WriteHTMLToFile(filePath string, data []byte) error {
+	err := os.WriteFile(filePath, data, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write file %s: %v", filePath, err)
+	}
+	fmt.Printf("Converted to %s\n", filePath)
+	return nil
 }
