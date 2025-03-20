@@ -25,9 +25,9 @@ func main() {
 			return err
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {
-      fmt.Println("=============", path)
 			relativePath, err := filepath.Rel(inputDir, path)
 			if err != nil {
+
 				return err
 			}
 			outputPath := filepath.Join(outputDir, strings.TrimSuffix(relativePath, ".md")+".html")
@@ -38,7 +38,7 @@ func main() {
 					return err
 				}
 			}
-			content.ConvertMarkdownToHTML(path, outputPath)
+			content.ConvertMarkdownToHTML(path, outputDirPath)
 		}
 		return nil
 	})
