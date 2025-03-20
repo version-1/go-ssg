@@ -1,0 +1,19 @@
+{
+  "name": "go-ssg",
+  "version": "1.0.0",
+  "description": "ブログサイトを簡単に構築できる Go でできた SSG フレームワークです。",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "serve": "serve public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
