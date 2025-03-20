@@ -50,7 +50,7 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 
 	output := ConvertMarkdownToHTML(markdownFile.Content)
 
-	// Replace placeholders in the template
+	// TODO: Implement sanitize processing here before replacing placeholders
 	finalContent := strings.ReplaceAll(string(templateContent), "{{ args.content }}", string(output))
 	finalContent = strings.ReplaceAll(finalContent, "{{ args.title }}", markdownFile.Metadata.Title)
 
