@@ -31,6 +31,13 @@ func main() {
 				return err
 			}
 			outputPath := filepath.Join(outputDir, strings.TrimSuffix(relativePath, ".md")+".html")
+			outputDirPath := filepath.Dir(outputPath)
+			if _, err := os.Stat(outputDirPath); os.IsNotExist(err) {
+				err = os.MkdirAll(outputDirPath, os.ModePerm)
+				if err != nil {
+					return err
+				}
+			}
 			content.ConvertMarkdownToHTML(path, outputPath)
 		}
 		return nil
