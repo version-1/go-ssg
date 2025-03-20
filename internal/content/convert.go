@@ -11,8 +11,14 @@ import (
 	"github.com/russross/blackfriday/v2"
 )
 
+type Metadata struct {
+	Layout   string `yaml:"layout"`
+	PageType string `yaml:"page-type"`
+	Title    string `yaml:"title"`
+}
+
 type MarkdownFile struct {
-	Metadata map[string]interface{}
+	Metadata Metadata
 	Content  []byte
 }
 
@@ -47,7 +53,7 @@ func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
 		return nil, fmt.Errorf("invalid markdown file format")
 	}
 
-	metadata := make(map[string]interface{})
+	var metadata Metadata
 	if err := yaml.Unmarshal([]byte(parts[1]), &metadata); err != nil {
 		return nil, fmt.Errorf("failed to parse metadata: %v", err)
 	}
