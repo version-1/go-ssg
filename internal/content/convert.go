@@ -10,13 +10,17 @@ import (
 	"github.com/russross/blackfriday/v2"
 )
 
-func ConvertMarkdownToHTML(inputPath, outputDir string) {
+func ConvertMarkdownToHTML(input []byte) []byte {
+	return blackfriday.Run(input)
+}
+
+func ProcessMarkdownFile(inputPath, outputDir string) {
 	input, err := os.ReadFile(inputPath)
 	if err != nil {
 		log.Fatalf("Failed to read file %s: %v", inputPath, err)
 	}
 
-	output := blackfriday.Run(input)
+	output := ConvertMarkdownToHTML(input)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
 	err = os.WriteFile(outputFilePath, output, 0644)
