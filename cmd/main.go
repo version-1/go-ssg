@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,8 +11,14 @@ import (
 )
 
 func main() {
-	inputDir := "content"
-	outputDir := "public"
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go-ssg <project-root>")
+		os.Exit(1)
+	}
+
+	projectRoot := os.Args[1]
+	inputDir := filepath.Join(projectRoot, "content")
+	outputDir := filepath.Join(projectRoot, "public")
 
 	err := filepath.Walk(inputDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
