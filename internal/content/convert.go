@@ -6,9 +6,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"gopkg.in/yaml.v2"
 
 	"github.com/russross/blackfriday/v2"
 )
+
+type MarkdownFile struct {
+	Metadata map[string]interface{}
+	Content  []byte
+}
 
 func ConvertMarkdownToHTML(input []byte) []byte {
 	return blackfriday.Run(input)
@@ -20,7 +26,22 @@ func ProcessMarkdownFile(inputPath, outputDir string) {
 		log.Fatalf("Failed to read file %s: %v", inputPath, err)
 	}
 
-	output := ConvertMarkdownToHTML(input)
+	markdownFile, err := parseMarkdownFile(input)
+	if err != nil {
+		log.Fatalf("Failed to parse markdown file %s: %v", inputPath, err)
+	}
+
+	output := ConvertMarkdownToHTML(markdownFile.Content)
+	if err != nil {
+		log.Fatalf("Failed to read file %s: %v", inputPath, err)
+	}
+
+	markdownFile, err := parseMarkdownFile(input)
+	if err != nil {
+		log.Fatalf("Failed to parse markdown file %s: %v", inputPath, err)
+	}
+
+	output := ConvertMarkdownToHTML(markdownFile.Content)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
 	err = os.WriteFile(outputFilePath, output, 0644)
@@ -29,4 +50,20 @@ func ProcessMarkdownFile(inputPath, outputDir string) {
 	}
 
 	fmt.Printf("Converted %s to %s\n", inputPath, outputFilePath)
+}
+func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
+	parts := strings.SplitN(string(data), "---", 3)
+	if len(parts) < 3 {
+		return nil, fmt.Errorf("invalid markdown file format")
+	}
+
+	metadata := make(map[string]interface{})
+	if err := yaml.Unmarshal([]byte(parts[1]), &metadata); err != nil {
+		return nil, fmt.Errorf("failed to parse metadata: %v", err)
+	}
+
+	return &MarkdownFile{
+		Metadata: metadata,
+		Content:  []byte(parts[2]),
+	}, nil
 }
