@@ -17,7 +17,7 @@ func main() {
 	}
 
 	projectRoot := os.Args[1]
-	inputDir := filepath.Join(projectRoot, "content")
+	inputDir := filepath.Join(projectRoot, "pages")
 	outputDir := filepath.Join(projectRoot, "public")
 
 	err := filepath.Walk(inputDir, func(path string, info os.FileInfo, err error) error {
