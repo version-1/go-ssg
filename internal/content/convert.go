@@ -50,8 +50,12 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 
 	output := ConvertMarkdownToHTML(markdownFile.Content)
 
+	// Replace placeholders in the template
+	finalContent := strings.ReplaceAll(string(templateContent), "{{ args.content }}", string(output))
+	finalContent = strings.ReplaceAll(finalContent, "{{ args.title }}", markdownFile.Metadata.Title)
+
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
-	if err := WriteHTMLToFile(outputFilePath, output); err != nil {
+	if err := WriteHTMLToFile(outputFilePath, []byte(finalContent)); err != nil {
 		log.Fatalf("Failed to write file %s: %v", outputFilePath, err)
 	}
 }
