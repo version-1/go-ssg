@@ -25,7 +25,12 @@ func main() {
 			return err
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {
-			content.ConvertMarkdownToHTML(path, outputDir)
+			relativePath, err := filepath.Rel(inputDir, path)
+			if err != nil {
+				return err
+			}
+			outputPath := filepath.Join(outputDir, strings.TrimSuffix(relativePath, ".md")+".html")
+			content.ConvertMarkdownToHTML(path, outputPath)
 		}
 		return nil
 	})
