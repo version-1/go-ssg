@@ -31,7 +31,7 @@ func GetTemplateFilePath(projectRoot string, metadata Metadata) string {
 	return filepath.Join(projectRoot, "templates", metadata.Layout+".tmpl.html")
 }
 
-func ProcessMarkdownFile(inputPath, outputDir string) {
+func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 	input, err := os.ReadFile(inputPath)
 	if err != nil {
 		log.Fatalf("Failed to read file %s: %v", inputPath, err)

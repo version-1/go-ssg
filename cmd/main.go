@@ -50,7 +50,7 @@ func main() {
 			if err := ensureDirExists(outputDirPath); err != nil {
 				return err
 			}
-			content.ProcessMarkdownFile(path, outputDirPath)
+			content.ProcessMarkdownFile(projectRoot, path, outputDirPath)
 		}
 		return nil
 	})
