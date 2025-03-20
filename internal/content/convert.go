@@ -42,6 +42,12 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 		log.Fatalf("Failed to parse markdown file %s: %v", inputPath, err)
 	}
 
+	templateFilePath := GetTemplateFilePath(projectRoot, markdownFile.Metadata)
+	templateContent, err := os.ReadFile(templateFilePath)
+	if err != nil {
+		log.Fatalf("Failed to read template file %s: %v", templateFilePath, err)
+	}
+
 	output := ConvertMarkdownToHTML(markdownFile.Content)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
