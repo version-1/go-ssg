@@ -32,16 +32,6 @@ func ProcessMarkdownFile(inputPath, outputDir string) {
 	}
 
 	output := ConvertMarkdownToHTML(markdownFile.Content)
-	if err != nil {
-		log.Fatalf("Failed to read file %s: %v", inputPath, err)
-	}
-
-	markdownFile, err := parseMarkdownFile(input)
-	if err != nil {
-		log.Fatalf("Failed to parse markdown file %s: %v", inputPath, err)
-	}
-
-	output := ConvertMarkdownToHTML(markdownFile.Content)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
 	err = os.WriteFile(outputFilePath, output, 0644)
