@@ -10,7 +10,14 @@ import (
 	"github.com/version-1/go-ssg/internal/content"
 )
 
-func main() {
+func ensureDirExists(dirPath string) error {
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go-ssg <project-root>")
 		os.Exit(1)
@@ -31,12 +38,8 @@ func main() {
 				return err
 			}
 			outputPath := filepath.Join(outputDir, strings.TrimSuffix(relativePath, ".md")+".html")
-			outputDirPath := filepath.Dir(outputPath)
-			if _, err := os.Stat(outputDirPath); os.IsNotExist(err) {
-				err = os.MkdirAll(outputDirPath, os.ModePerm)
-				if err != nil {
-					return err
-				}
+			if err := ensureDirExists(filepath.Dir(outputPath)); err != nil {
+				return err
 			}
 			content.ConvertMarkdownToHTML(path, outputDirPath)
 		}
