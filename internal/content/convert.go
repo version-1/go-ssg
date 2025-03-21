@@ -1,20 +1,17 @@
 package content
 
 import (
-	"github.com/yourproject/markdown"
-	"github.com/yourproject/template"
-	"github.com/yourproject/fileutils"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	"github.com/version-1/go-ssg/fileutils"
+	"github.com/version-1/go-ssg/markdown"
+	"github.com/version-1/go-ssg/template"
 
-	"github.com/russross/blackfriday/v2"
 	"github.com/microcosm-cc/bluemonday"
 )
-
 
 func sanitizeHTML(input []byte) []byte {
 	policy := bluemonday.UGCPolicy()
