@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/version-1/go-ssg/internal/content"
 	"github.com/version-1/go-ssg/internal/fileutils"
 	"github.com/version-1/go-ssg/internal/markdown"
 	"github.com/version-1/go-ssg/internal/template"
@@ -39,10 +40,7 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 
 	output = sanitizeHTML(output)
 	// TODO: Implement stylesheet and javascript replacement logic
-	finalContent := strings.ReplaceAll(string(templateContent), "{{ args.content }}", string(output))
-	finalContent = strings.ReplaceAll(finalContent, "{{ args.stylesheet }}", "")
-	finalContent = strings.ReplaceAll(finalContent, "{{ args.javascript }}", "")
-	finalContent = strings.ReplaceAll(finalContent, "{{ args.title }}", markdownFile.Metadata.Title)
+	finalContent := content.CreateFinalContent(templateContent, output, markdownFile.Metadata)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
 	if err := fileutils.WriteHTMLToFile(outputFilePath, []byte(finalContent)); err != nil {
