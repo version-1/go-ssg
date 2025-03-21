@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/version-1/go-ssg/fileutils"
-	"github.com/version-1/go-ssg/markdown"
-	"github.com/version-1/go-ssg/template"
+	"github.com/yourproject/fileutils"
+	"github.com/yourproject/markdown"
+	"github.com/yourproject/template"
 
 	"github.com/microcosm-cc/bluemonday"
 )
