@@ -11,6 +11,7 @@ import (
 
 	"github.com/russross/blackfriday/v2"
 	"github.com/microcosm-cc/bluemonday"
+)
 
 type Metadata struct {
 	Layout   string `yaml:"layout"`
@@ -35,6 +36,7 @@ func sanitizeHTML(input []byte) []byte {
 	policy := bluemonday.UGCPolicy()
 	return policy.SanitizeBytes(input)
 }
+
 func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 	input, err := os.ReadFile(inputPath)
 	if err != nil {
@@ -66,6 +68,7 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 		log.Fatalf("Failed to write file %s: %v", outputFilePath, err)
 	}
 }
+
 func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
 	parts := strings.SplitN(string(data), "---", 3)
 	if len(parts) < 3 {
@@ -82,6 +85,7 @@ func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
 		Content:  []byte(parts[2]),
 	}, nil
 }
+
 func WriteHTMLToFile(filePath string, data []byte) error {
 	err := os.WriteFile(filePath, data, 0644)
 	if err != nil {
