@@ -1,3 +1,10 @@
+---
+layout: base
+page-type: static
+title: トップページ
+
+---
+
 ## ブログ
 
 - [About](./about/index.html)
