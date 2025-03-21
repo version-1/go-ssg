@@ -1,7 +1,9 @@
 package content
 
 import (
-	"fmt"
+	"github.com/yourproject/markdown"
+	"github.com/yourproject/template"
+	"github.com/yourproject/fileutils"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,24 +15,6 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-type Metadata struct {
-	Layout   string `yaml:"layout"`
-	PageType string `yaml:"page-type"`
-	Title    string `yaml:"title"`
-}
-
-type MarkdownFile struct {
-	Metadata Metadata
-	Content  []byte
-}
-
-func ConvertMarkdownToHTML(input []byte) []byte {
-	return blackfriday.Run(input)
-}
-
-func GetTemplateFilePath(projectRoot string, metadata Metadata) string {
-	return filepath.Join(projectRoot, "templates", metadata.Layout+".tmpl.html")
-}
 
 func sanitizeHTML(input []byte) []byte {
 	policy := bluemonday.UGCPolicy()
@@ -43,18 +27,18 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 		log.Fatalf("Failed to read file %s: %v", inputPath, err)
 	}
 
-	markdownFile, err := parseMarkdownFile(input)
+	markdownFile, err := markdown.ParseMarkdownFile(input)
 	if err != nil {
 		log.Fatalf("Failed to parse markdown file %s: %v", inputPath, err)
 	}
 
-	templateFilePath := GetTemplateFilePath(projectRoot, markdownFile.Metadata)
+	templateFilePath := template.GetTemplateFilePath(projectRoot, markdownFile.Metadata)
 	templateContent, err := os.ReadFile(templateFilePath)
 	if err != nil {
 		log.Fatalf("Failed to read template file %s: %v", templateFilePath, err)
 	}
 
-	output := ConvertMarkdownToHTML(markdownFile.Content)
+	output := markdown.ConvertMarkdownToHTML(markdownFile.Content)
 
 	output = sanitizeHTML(output)
 	// TODO: Implement stylesheet and javascript replacement logic
@@ -64,33 +48,7 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 	finalContent = strings.ReplaceAll(finalContent, "{{ args.title }}", markdownFile.Metadata.Title)
 
 	outputFilePath := filepath.Join(outputDir, strings.TrimSuffix(filepath.Base(inputPath), ".md")+".html")
-	if err := WriteHTMLToFile(outputFilePath, []byte(finalContent)); err != nil {
+	if err := fileutils.WriteHTMLToFile(outputFilePath, []byte(finalContent)); err != nil {
 		log.Fatalf("Failed to write file %s: %v", outputFilePath, err)
 	}
-}
-
-func parseMarkdownFile(data []byte) (*MarkdownFile, error) {
-	parts := strings.SplitN(string(data), "---", 3)
-	if len(parts) < 3 {
-		return nil, fmt.Errorf("invalid markdown file format")
-	}
-
-	var metadata Metadata
-	if err := yaml.Unmarshal([]byte(parts[1]), &metadata); err != nil {
-		return nil, fmt.Errorf("failed to parse metadata: %v", err)
-	}
-
-	return &MarkdownFile{
-		Metadata: metadata,
-		Content:  []byte(parts[2]),
-	}, nil
-}
-
-func WriteHTMLToFile(filePath string, data []byte) error {
-	err := os.WriteFile(filePath, data, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to write file %s: %v", filePath, err)
-	}
-	fmt.Printf("Converted to %s\n", filePath)
-	return nil
 }
