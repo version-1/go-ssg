@@ -35,6 +35,7 @@ func sanitizeHTML(input []byte) []byte {
 	policy := bluemonday.UGCPolicy()
 	return policy.SanitizeBytes(input)
 }
+func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 	input, err := os.ReadFile(inputPath)
 	if err != nil {
 		log.Fatalf("Failed to read file %s: %v", inputPath, err)
