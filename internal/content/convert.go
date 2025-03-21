@@ -14,10 +14,6 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-func sanitizeHTML(input []byte) []byte {
-	policy := bluemonday.UGCPolicy()
-	return policy.SanitizeBytes(input)
-}
 
 func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 	input, err := os.ReadFile(inputPath)
@@ -38,7 +34,6 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 
 	output := markdown.ConvertMarkdownToHTML(markdownFile.Content)
 
-	output = sanitizeHTML(output)
 	// TODO: Implement stylesheet and javascript replacement logic
 	finalContent := content.CreateFinalContent(templateContent, output, markdownFile.Metadata)
 
