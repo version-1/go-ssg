@@ -7,17 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/version-1/go-ssg/internal/config"
 	"github.com/version-1/go-ssg/internal/content"
+	"github.com/version-1/go-ssg/internal/fileutils"
 )
 
-func ensureDirExists(dirPath string) error {
-	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
-			return err
-		}
-	}
-	return nil
-}
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go-ssg <project-root>")
@@ -25,28 +19,33 @@ func main() {
 	}
 
 	projectRoot := os.Args[1]
-	inputDir := filepath.Join(projectRoot, "pages")
-	outputDir := filepath.Join(projectRoot, "public")
+	cfg := config.NewConfig(projectRoot)
+	inputDir := cfg.GetInputDir()
 
 	err := filepath.Walk(inputDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
+
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".md") {
 			relativePath, err := filepath.Rel(inputDir, path)
 			if err != nil {
+				return err
+			}
 
-				return err
-			}
-			outputPath := filepath.Join(outputDir, strings.TrimSuffix(relativePath, ".md")+".html")
+			outputPath := cfg.Output.PagePath(relativePath, ".md")
 			outputDirPath := filepath.Dir(outputPath)
-			if err := ensureDirExists(outputDirPath); err != nil {
+			if err := fileutils.EnsureDirExists(outputDirPath); err != nil {
 				return err
 			}
-			content.ProcessMarkdownFile(projectRoot, path, outputDirPath)
+
+			if err := content.Build(cfg, path); err != nil {
+				return err
+			}
 		}
 		return nil
 	})
+
 	if err != nil {
 		log.Fatalf("Error walking the path %q: %v\n", inputDir, err)
 	}
