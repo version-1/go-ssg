@@ -2,10 +2,11 @@ package markdown
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
-	"gopkg.in/yaml.v2"
 	"github.com/russross/blackfriday/v2"
+	"gopkg.in/yaml.v2"
 )
 
 type Metadata struct {
@@ -15,27 +16,53 @@ type Metadata struct {
 }
 
 type MarkdownFile struct {
+	Path     string
 	Metadata Metadata
 	Content  []byte
 }
 
-func ConvertMarkdownToHTML(input []byte) []byte {
+func NewMarkdownFile(inputPath string) (*MarkdownFile, error) {
+	input, err := os.ReadFile(inputPath)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read file %s: %v", inputPath, err)
+	}
+
+	m := &MarkdownFile{
+		Path: inputPath,
+	}
+
+	if err := m.parse(input); err != nil {
+		return nil, fmt.Errorf("Failed to parse markdown file %s: %v", inputPath, err)
+	}
+
+	return m, nil
+}
+
+func (m MarkdownFile) GetTitle() string {
+	return m.Metadata.Title
+}
+
+func (m MarkdownFile) HTML() []byte {
+	return convertMarkdownToHTML(m.Content)
+}
+
+func convertMarkdownToHTML(input []byte) []byte {
 	return blackfriday.Run(input)
 }
 
-func ParseMarkdownFile(data []byte) (*MarkdownFile, error) {
+func (m *MarkdownFile) parse(data []byte) error {
 	parts := strings.SplitN(string(data), "---", 3)
 	if len(parts) < 3 {
-		return nil, fmt.Errorf("invalid markdown file format")
+		return fmt.Errorf("invalid markdown file format")
 	}
 
 	var metadata Metadata
 	if err := yaml.Unmarshal([]byte(parts[1]), &metadata); err != nil {
-		return nil, fmt.Errorf("failed to parse metadata: %v", err)
+		return fmt.Errorf("failed to parse metadata: %v", err)
 	}
 
-	return &MarkdownFile{
-		Metadata: metadata,
-		Content:  []byte(parts[2]),
-	}, nil
+	m.Metadata = metadata
+	m.Content = []byte(parts[2])
+
+	return nil
 }
