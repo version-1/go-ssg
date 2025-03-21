@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/russross/blackfriday/v2"
-)
+	"github.com/microcosm-cc/bluemonday"
 
 type Metadata struct {
 	Layout   string `yaml:"layout"`
@@ -31,7 +31,10 @@ func GetTemplateFilePath(projectRoot string, metadata Metadata) string {
 	return filepath.Join(projectRoot, "templates", metadata.Layout+".tmpl.html")
 }
 
-func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
+func sanitizeHTML(input []byte) []byte {
+	policy := bluemonday.UGCPolicy()
+	return policy.SanitizeBytes(input)
+}
 	input, err := os.ReadFile(inputPath)
 	if err != nil {
 		log.Fatalf("Failed to read file %s: %v", inputPath, err)
@@ -50,7 +53,7 @@ func ProcessMarkdownFile(projectRoot, inputPath, outputDir string) {
 
 	output := ConvertMarkdownToHTML(markdownFile.Content)
 
-	// TODO: Implement sanitize processing here before replacing placeholders
+	output = sanitizeHTML(output)
 	// TODO: Implement stylesheet and javascript replacement logic
 	finalContent := strings.ReplaceAll(string(templateContent), "{{ args.content }}", string(output))
 	finalContent = strings.ReplaceAll(finalContent, "{{ args.stylesheet }}", "")
